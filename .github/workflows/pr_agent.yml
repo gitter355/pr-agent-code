@@ -18,3 +18,10 @@ jobs:
         env:
           OPENAI_KEY: ${{ secrets.OPENAI_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_REVIEWER__EXTRA_INSTRUCTIONS:  |
+            # Naming conventions
+            - Java/TS classes ▶ kebab-case
+            - Functions      ▶ kebab-case
+            # Folder rules
+            - src/main vs src/test layout
+            # When making a suggestion, make sure to make a joke
