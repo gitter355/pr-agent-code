@@ -18,7 +18,7 @@ jobs:
         env:
           OPENAI_KEY: ${{ secrets.OPENAI_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_REVIEWER__EXTRA_INSTRUCTIONS:  |
+          PR_REVIEWER.EXTRA_INSTRUCTIONS:  |
             # Naming conventions
             - Java/TS classes ▶ kebab-case
             - Functions      ▶ kebab-case
