@@ -5,6 +5,8 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -34,6 +36,11 @@ public class User {
     @Column(name = "phone_number", length = 15)
     private String phoneNumber;
     
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_permissions", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "permission", length = 100)
+    private List<String> permissions = new ArrayList<>();
+    
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
     
@@ -49,6 +56,16 @@ public class User {
         this.lastName = lastName;
         this.email = email;
         this.phoneNumber = phoneNumber;
+        this.permissions = new ArrayList<>();
+        this.createdAt = LocalDateTime.now();
+    }
+    
+    public User(String firstName, String lastName, String email, String phoneNumber, List<String> permissions) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.permissions = permissions != null ? new ArrayList<>(permissions) : new ArrayList<>();
         this.createdAt = LocalDateTime.now();
     }
     
@@ -56,6 +73,9 @@ public class User {
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
+        if (permissions == null) {
+            permissions = new ArrayList<>();
+        }
     }
     
     @PreUpdate
@@ -104,6 +124,14 @@ public class User {
         this.phoneNumber = phoneNumber;
     }
     
+    public List<String> getPermissions() {
+        return permissions;
+    }
+    
+    public void setPermissions(List<String> permissions) {
+        this.permissions = permissions != null ? new ArrayList<>(permissions) : new ArrayList<>();
+    }
+    
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -128,6 +156,7 @@ public class User {
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
+                ", permissions=" + permissions +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 '}';
