@@ -53,6 +53,12 @@ public class UserService {
         return userRepository.save(user);
     }
     
+    public User updateUserPermission(Long id, User.Permission permission) {
+        User user = getUserById(id);
+        user.setPermission(permission);
+        return userRepository.save(user);
+    }
+    
     public void deleteUser(Long id) {
         User user = getUserById(id);
         userRepository.delete(user);

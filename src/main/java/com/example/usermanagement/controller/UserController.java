@@ -1,5 +1,6 @@
 package com.example.usermanagement.controller;
 
+import com.example.usermanagement.dto.PermissionUpdateRequest;
 import com.example.usermanagement.entity.User;
 import com.example.usermanagement.service.UserService;
 import jakarta.validation.Valid;
@@ -43,6 +44,13 @@ public class UserController {
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @Valid @RequestBody User userDetails) {
         User updatedUser = userService.updateUser(id, userDetails);
+        return ResponseEntity.ok(updatedUser);
+    }
+    
+    @PatchMapping("/{id}/permission")
+    public ResponseEntity<User> updateUserPermission(@PathVariable Long id, 
+                                                     @Valid @RequestBody PermissionUpdateRequest permissionRequest) {
+        User updatedUser = userService.updateUserPermission(id, permissionRequest.getPermission());
         return ResponseEntity.ok(updatedUser);
     }
     
