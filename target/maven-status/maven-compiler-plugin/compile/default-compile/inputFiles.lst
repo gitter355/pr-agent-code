@@ -1,0 +1,8 @@
+/Users/sarunasj/src/ai-lab/pr-agent-code/src/main/java/com/example/usermanagement/repository/UserRepository.java
+/Users/sarunasj/src/ai-lab/pr-agent-code/src/main/java/com/example/usermanagement/controller/UserController.java
+/Users/sarunasj/src/ai-lab/pr-agent-code/src/main/java/com/example/usermanagement/exception/UserNotFoundException.java
+/Users/sarunasj/src/ai-lab/pr-agent-code/src/main/java/com/example/usermanagement/service/UserService.java
+/Users/sarunasj/src/ai-lab/pr-agent-code/src/main/java/com/example/usermanagement/exception/DuplicateEmailException.java
+/Users/sarunasj/src/ai-lab/pr-agent-code/src/main/java/com/example/usermanagement/exception/GlobalExceptionHandler.java
+/Users/sarunasj/src/ai-lab/pr-agent-code/src/main/java/com/example/usermanagement/entity/User.java
+/Users/sarunasj/src/ai-lab/pr-agent-code/src/main/java/com/example/usermanagement/UserManagementApplication.java
