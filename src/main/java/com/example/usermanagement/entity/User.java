@@ -34,11 +34,32 @@ public class User {
     @Column(name = "phone_number", length = 15)
     private String phoneNumber;
     
+    @Enumerated(EnumType.STRING)
+    @Column(name = "permission", nullable = false)
+    private Permission permission = Permission.USER;
+    
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
     
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+    
+    // Permission enum
+    public enum Permission {
+        USER("USER"),
+        MODERATOR("MODERATOR"),
+        ADMIN("ADMIN");
+        
+        private final String value;
+        
+        Permission(String value) {
+            this.value = value;
+        }
+        
+        public String getValue() {
+            return value;
+        }
+    }
     
     // Constructors
     public User() {
@@ -49,6 +70,7 @@ public class User {
         this.lastName = lastName;
         this.email = email;
         this.phoneNumber = phoneNumber;
+        this.permission = Permission.USER; // Default permission
         this.createdAt = LocalDateTime.now();
     }
     
@@ -104,6 +126,14 @@ public class User {
         this.phoneNumber = phoneNumber;
     }
     
+    public Permission getPermission() {
+        return permission;
+    }
+    
+    public void setPermission(Permission permission) {
+        this.permission = permission;
+    }
+    
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -128,6 +158,7 @@ public class User {
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
+                ", permission=" + permission +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 '}';

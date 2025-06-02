@@ -18,6 +18,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     
     List<User> findByLastNameContainingIgnoreCase(String lastName);
     
+    List<User> findByPermission(User.Permission permission);
+    
     @Query("SELECT u FROM User u WHERE " +
            "u.firstName LIKE %:searchTerm% OR " +
            "u.lastName LIKE %:searchTerm% OR " +

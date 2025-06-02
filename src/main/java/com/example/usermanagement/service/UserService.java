@@ -50,6 +50,17 @@ public class UserService {
         user.setEmail(userDetails.getEmail());
         user.setPhoneNumber(userDetails.getPhoneNumber());
         
+        // Update permission if provided
+        if (userDetails.getPermission() != null) {
+            user.setPermission(userDetails.getPermission());
+        }
+        
+        return userRepository.save(user);
+    }
+    
+    public User updateUserPermission(Long id, User.Permission permission) {
+        User user = getUserById(id);
+        user.setPermission(permission);
         return userRepository.save(user);
     }
     
@@ -72,5 +83,9 @@ public class UserService {
     
     public List<User> getUsersByLastName(String lastName) {
         return userRepository.findByLastNameContainingIgnoreCase(lastName);
+    }
+    
+    public List<User> getUsersByPermission(User.Permission permission) {
+        return userRepository.findByPermission(permission);
     }
 } 

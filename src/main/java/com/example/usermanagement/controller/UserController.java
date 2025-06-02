@@ -1,5 +1,6 @@
 package com.example.usermanagement.controller;
 
+import com.example.usermanagement.dto.PermissionUpdateRequest;
 import com.example.usermanagement.entity.User;
 import com.example.usermanagement.service.UserService;
 import jakarta.validation.Valid;
@@ -46,6 +47,13 @@ public class UserController {
         return ResponseEntity.ok(updatedUser);
     }
     
+    @PatchMapping("/{id}/permission")
+    public ResponseEntity<User> updateUserPermission(@PathVariable Long id, 
+                                                     @Valid @RequestBody PermissionUpdateRequest permissionRequest) {
+        User updatedUser = userService.updateUserPermission(id, permissionRequest.getPermission());
+        return ResponseEntity.ok(updatedUser);
+    }
+    
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
@@ -74,6 +82,12 @@ public class UserController {
     @GetMapping("/lastname/{lastName}")
     public ResponseEntity<List<User>> getUsersByLastName(@PathVariable String lastName) {
         List<User> users = userService.getUsersByLastName(lastName);
+        return ResponseEntity.ok(users);
+    }
+    
+    @GetMapping("/permission/{permission}")
+    public ResponseEntity<List<User>> getUsersByPermission(@PathVariable User.Permission permission) {
+        List<User> users = userService.getUsersByPermission(permission);
         return ResponseEntity.ok(users);
     }
 } 
