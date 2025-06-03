@@ -25,7 +25,5 @@ jobs:
             # Folder rules
             - src/main vs src/test layout
             # When making a suggestion, make sure to make a joke
-          PR_CODE_SUGGESTIONS.ENABLE_CHAT_TEXT: true
-          PR_CODE_SUGGESTIONS.COMMITABLE_CODE_SUGGESTIONS: true
-          
+
 
