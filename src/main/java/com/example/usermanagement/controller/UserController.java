@@ -1,5 +1,6 @@
 package com.example.usermanagement.controller;
 
+import com.example.usermanagement.dto.TagRequest;
 import com.example.usermanagement.entity.User;
 import com.example.usermanagement.service.UserService;
 import jakarta.validation.Valid;
@@ -43,6 +44,18 @@ public class UserController {
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @Valid @RequestBody User userDetails) {
         User updatedUser = userService.updateUser(id, userDetails);
+        return ResponseEntity.ok(updatedUser);
+    }
+    
+    @PostMapping("/{id}/tags")
+    public ResponseEntity<User> addTagToUser(@PathVariable Long id, @Valid @RequestBody TagRequest tagRequest) {
+        User updatedUser = userService.addTagToUser(id, tagRequest.getTag());
+        return ResponseEntity.ok(updatedUser);
+    }
+    
+    @DeleteMapping("/{id}/tags")
+    public ResponseEntity<User> removeTagFromUser(@PathVariable Long id, @Valid @RequestBody TagRequest tagRequest) {
+        User updatedUser = userService.removeTagFromUser(id, tagRequest.getTag());
         return ResponseEntity.ok(updatedUser);
     }
     
