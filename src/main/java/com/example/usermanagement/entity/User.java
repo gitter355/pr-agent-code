@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -39,6 +40,9 @@ public class User {
     
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+    
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<UserPermission> userPermissions;
     
     // Constructors
     public User() {
@@ -118,6 +122,14 @@ public class User {
     
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+    
+    public List<UserPermission> getUserPermissions() {
+        return userPermissions;
+    }
+    
+    public void setUserPermissions(List<UserPermission> userPermissions) {
+        this.userPermissions = userPermissions;
     }
     
     @Override
