@@ -21,7 +21,7 @@ jobs:
       
       - name: PR Agent action step
         id: pragent
-        uses: ailabcommonacr.azurecr.io/nortal-pr-agent
+        uses: docker://ailabcommonacr.azurecr.io/nortal-pr-agent
         env:
           OPENAI_KEY: ${{ secrets.OPENAI_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
