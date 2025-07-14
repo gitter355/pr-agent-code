@@ -1,7 +1,11 @@
+name: PR Agent Workflow
+
 on:
   pull_request:
     types: [opened, reopened, ready_for_review, synchronize]
   issue_comment:
+    types: [created]
+
 jobs:
   pr_agent_job:
     if: ${{ github.event.sender.type != 'Bot' }}
@@ -30,7 +34,7 @@ jobs:
           CONFIG.OTEL_SERVICE_NAME: ${{ vars.OTEL_SERVICE_NAME }}
           CONFIG.OTEL_BASIC_AUTH_USERNAME: ${{ vars.OTEL_BASIC_AUTH_USERNAME }}
           CONFIG.OTEL_BASIC_AUTH_PASSWORD: ${{ secrets.OTEL_BASIC_AUTH_PASSWORD }}
-          PR_REVIEWER.EXTRA_INSTRUCTIONS:  |
+          PR_REVIEWER.EXTRA_INSTRUCTIONS: |
             # Naming conventions
             - Java/TS classes ▶ kebab-case
             - Functions      ▶ kebab-case
