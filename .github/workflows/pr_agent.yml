@@ -12,12 +12,24 @@ jobs:
       contents: write
     name: Run pr agent on every pull request, respond to user comments
     steps:
+      - name: Login to Azure Container Registry
+        uses: azure/docker-login@v1
+        with:
+          login-server: ailabcommonacr.azurecr.io
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+      
       - name: PR Agent action step
         id: pragent
-        uses: qodo-ai/pr-agent@main
+        uses: ailabcommonacr.azurecr.io/nortal-pr-agent
         env:
           OPENAI_KEY: ${{ secrets.OPENAI_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CONFIG.ENABLE_OTEL_METRICS: true
+          CONFIG.OTEL_ENDPOINT: ${{ vars.OTEL_ENDPOINT }}
+          CONFIG.OTEL_SERVICE_NAME: ${{ vars.OTEL_SERVICE_NAME }}
+          CONFIG.OTEL_BASIC_AUTH_USERNAME: ${{ vars.OTEL_BASIC_AUTH_USERNAME }}
+          CONFIG.OTEL_BASIC_AUTH_PASSWORD: ${{ secrets.OTEL_BASIC_AUTH_PASSWORD }}
           PR_REVIEWER.EXTRA_INSTRUCTIONS:  |
             # Naming conventions
             - Java/TS classes ▶ kebab-case
