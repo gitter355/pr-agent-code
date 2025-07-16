@@ -29,7 +29,7 @@ jobs:
       - name: Run PR Agent container
         env:
             OPENAI_KEY: ${{ secrets.OPENAI_KEY }}
-            OPENAI__API_KEY: ${{ secrets.OPENAI_KEY }}
+            OPENAI__KEY: ${{ secrets.OPENAI_KEY }}
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             GITHUB__USER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             GITHUB__DEPLOYMENT_TYPE: "user"
@@ -41,15 +41,15 @@ jobs:
         run: |
           set -euo pipefail
           
-          docker run --rm -e OPENAI_KEY -e OPENAI__API_KEY -e GITHUB_TOKEN -e GITHUB__USER_TOKEN -e GITHUB__DEPLOYMENT_TYPE -e CONFIG__OTEL_BASIC_AUTH_USERNAME -e CONFIG__OTEL_BASIC_AUTH_PASSWORD -e CONFIG__GIT_PROVIDER \
+          docker run --rm -e OPENAI_KEY -e OPENAI__KEY -e GITHUB_TOKEN -e GITHUB__USER_TOKEN -e GITHUB__DEPLOYMENT_TYPE -e CONFIG__OTEL_BASIC_AUTH_USERNAME -e CONFIG__OTEL_BASIC_AUTH_PASSWORD -e CONFIG__GIT_PROVIDER \
             "$IMAGE" --pr_url "${PR_URL}" describe
 
           
-          docker run --rm -e OPENAI_KEY -e OPENAI__API_KEY -e GITHUB_TOKEN -e GITHUB__USER_TOKEN -e GITHUB__DEPLOYMENT_TYPE -e CONFIG__OTEL_BASIC_AUTH_USERNAME -e CONFIG__OTEL_BASIC_AUTH_PASSWORD -e CONFIG__GIT_PROVIDER \
+          docker run --rm -e OPENAI_KEY -e OPENAI__KEY -e GITHUB_TOKEN -e GITHUB__USER_TOKEN -e GITHUB__DEPLOYMENT_TYPE -e CONFIG__OTEL_BASIC_AUTH_USERNAME -e CONFIG__OTEL_BASIC_AUTH_PASSWORD -e CONFIG__GIT_PROVIDER \
             "$IMAGE" --pr_url "${PR_URL}" review
 
           
-          docker run --rm -e OPENAI_KEY -e OPENAI__API_KEY -e GITHUB_TOKEN -e GITHUB__USER_TOKEN -e GITHUB__DEPLOYMENT_TYPE -e CONFIG__OTEL_BASIC_AUTH_USERNAME -e CONFIG__OTEL_BASIC_AUTH_PASSWORD -e CONFIG__GIT_PROVIDER \
+          docker run --rm -e OPENAI_KEY -e OPENAI__KEY -e GITHUB_TOKEN -e GITHUB__USER_TOKEN -e GITHUB__DEPLOYMENT_TYPE -e CONFIG__OTEL_BASIC_AUTH_USERNAME -e CONFIG__OTEL_BASIC_AUTH_PASSWORD -e CONFIG__GIT_PROVIDER \
             "$IMAGE" --pr_url "${PR_URL}" improve
 
 
