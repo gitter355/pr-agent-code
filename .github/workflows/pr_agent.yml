@@ -37,7 +37,7 @@ jobs:
             CONFIG__GIT_PROVIDER: "github"
             PR_URL: ${{ github.event.pull_request.html_url }}
             IMAGE: ${{ env.ACR_REGISTRY }}/nortal-pr-agent:latest
-            PR_CODE_SUGGESTIONS__COMMITABLE_CODE_SUGGESTIONS: "true"
+            PR_CODE_SUGGESTIONS__COMMITABLE_CODE_SUGGESTIONS: true
         run: |
           set -euo pipefail
           
