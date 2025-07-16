@@ -21,20 +21,15 @@ jobs:
           username: ${{ secrets.ACR_USERNAME }}
           password: ${{ secrets.ACR_PASSWORD }}
       
-      - name: PR Agent action step
-        id: pragent
-        uses: docker://ailabcommonacr.azurecr.io/nortal-pr-agent
-        env:
-          OPENAI_KEY: ${{ secrets.OPENAI_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CONFIG.OTEL_BASIC_AUTH_USERNAME: ${{ vars.OTEL_BASIC_AUTH_USERNAME }}
-          CONFIG.OTEL_BASIC_AUTH_PASSWORD: ${{ secrets.OTEL_BASIC_AUTH_PASSWORD }}
-          PR_REVIEWER.EXTRA_INSTRUCTIONS: |
-            # Naming conventions
-            - Java/TS classes ▶ kebab-case
-            - Functions      ▶ kebab-case
-            # Folder rules
-            - src/main vs src/test layout
-            # When making a suggestion, make sure to make a joke
+      - name: Run PR Agent container
+        run: |
+          docker pull ailabcommonacr.azurecr.io/nortal-pr-agent:latest
+          docker run --rm \
+            -e GITHUB_TOKEN \
+            -e OPENAI_KEY \
+            -e CONFIG.OTEL_BASIC_AUTH_USERNAME \
+            -e CONFIG.OTEL_BASIC_AUTH_PASSWORD \
+            -e PR_REVIEWER.EXTRA_INSTRUCTIONS \
+            ailabcommonacr.azurecr.io/nortal-pr-agent:latest
 
 
