@@ -37,11 +37,12 @@ jobs:
             CONFIG__GIT_PROVIDER: "github"
             PR_URL: ${{ github.event.pull_request.html_url }}
             IMAGE: ${{ env.ACR_REGISTRY }}/nortal-pr-agent:latest
+            PR_CODE_SUGGESTIONS__COMMITABLE_CODE_SUGGESTIONS: "true"
         run: |
           set -euo pipefail
           
           # Define common docker run arguments
-          DOCKER_ARGS="--rm -e OPENAI__KEY -e GITHUB__USER_TOKEN -e CONFIG__OTEL_BASIC_AUTH_USERNAME -e CONFIG__OTEL_BASIC_AUTH_PASSWORD -e CONFIG__GIT_PROVIDER"
+          DOCKER_ARGS="--rm -e OPENAI__KEY -e PR_CODE_SUGGESTIONS__COMMITABLE_CODE_SUGGESTIONS -e GITHUB__USER_TOKEN -e CONFIG__OTEL_BASIC_AUTH_USERNAME -e CONFIG__OTEL_BASIC_AUTH_PASSWORD -e CONFIG__GIT_PROVIDER"
           
           # Run PR Agent commands
           for cmd in describe review improve feedback; do
