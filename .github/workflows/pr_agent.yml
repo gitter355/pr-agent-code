@@ -38,15 +38,14 @@ jobs:
         run: |
           set -euo pipefail
           
-          # 1) Describe the PR (updates title/description)
           docker run --rm -e OPENAI_KEY -e GITHUB_TOKEN -e CONFIG__OTEL_BASIC_AUTH_USERNAME -e CONFIG__OTEL_BASIC_AUTH_PASSWORD -e CONFIG__GIT_PROVIDER \
             "$IMAGE" --pr_url "${PR_URL}" describe
 
-          # 2) Add a review with suggestions
+          
           docker run --rm -e OPENAI_KEY -e GITHUB_TOKEN -e CONFIG__OTEL_BASIC_AUTH_USERNAME -e CONFIG__OTEL_BASIC_AUTH_PASSWORD -e CONFIG__GIT_PROVIDER \
             "$IMAGE" --pr_url "${PR_URL}" review
 
-          # 3) (Optional) Send commit suggestions
+          
           docker run --rm -e OPENAI_KEY -e GITHUB_TOKEN -e CONFIG__OTEL_BASIC_AUTH_USERNAME -e CONFIG__OTEL_BASIC_AUTH_PASSWORD -e CONFIG__GIT_PROVIDER \
             "$IMAGE" --pr_url "${PR_URL}" improve
 
