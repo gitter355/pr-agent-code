@@ -32,40 +32,22 @@ jobs:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             CONFIG__OTEL_BASIC_AUTH_USERNAME: ${{ vars.OTEL_BASIC_AUTH_USERNAME }}
             CONFIG__OTEL_BASIC_AUTH_PASSWORD: ${{ secrets.OTEL_BASIC_AUTH_PASSWORD }}
-            PR_URL: ${{ github.event.pull_request.html_url }}      
+            CONFIG__GIT_PROVIDER: "github"
+            PR_URL: ${{ github.event.pull_request.html_url }}
+            IMAGE: ailabcommonacr.azurecr.io/nortal-pr-agent:latest
         run: |
           set -euo pipefail
-          IMAGE=ailabcommonacr.azurecr.io/nortal-pr-agent:latest
-          PR_URL=${{ github.event.pull_request.html_url }}
-
+          
           # 1) Describe the PR (updates title/description)
-          docker run --rm \
-            -e OPENAI_KEY \
-            -e GITHUB_TOKEN \
-            -e CONFIG__OTEL_BASIC_AUTH_USERNAME \
-            -e CONFIG__OTEL_BASIC_AUTH_PASSWORD \
-            "$IMAGE" \
-            --pr_url "${PR_URL}" \
-            describe
+          docker run --rm -e OPENAI_KEY -e GITHUB_TOKEN -e CONFIG__OTEL_BASIC_AUTH_USERNAME -e CONFIG__OTEL_BASIC_AUTH_PASSWORD -e CONFIG__GIT_PROVIDER \
+            "$IMAGE" --pr_url "${PR_URL}" describe
 
           # 2) Add a review with suggestions
-          docker run --rm \
-            -e OPENAI_KEY \
-            -e GITHUB_TOKEN \
-            -e CONFIG__OTEL_BASIC_AUTH_USERNAME \
-            -e CONFIG__OTEL_BASIC_AUTH_PASSWORD \
-            "$IMAGE" \
-            --pr_url "${PR_URL}" \
-            review
+          docker run --rm -e OPENAI_KEY -e GITHUB_TOKEN -e CONFIG__OTEL_BASIC_AUTH_USERNAME -e CONFIG__OTEL_BASIC_AUTH_PASSWORD -e CONFIG__GIT_PROVIDER \
+            "$IMAGE" --pr_url "${PR_URL}" review
 
           # 3) (Optional) Send commit suggestions
-          docker run --rm \
-            -e OPENAI_KEY \
-            -e GITHUB_TOKEN \
-            -e CONFIG__OTEL_BASIC_AUTH_USERNAME \
-            -e CONFIG__OTEL_BASIC_AUTH_PASSWORD \
-            "$IMAGE" \
-            --pr_url "${PR_URL}" \
-            improve
+          docker run --rm -e OPENAI_KEY -e GITHUB_TOKEN -e CONFIG__OTEL_BASIC_AUTH_USERNAME -e CONFIG__OTEL_BASIC_AUTH_PASSWORD -e CONFIG__GIT_PROVIDER \
+            "$IMAGE" --pr_url "${PR_URL}" improve
 
 
