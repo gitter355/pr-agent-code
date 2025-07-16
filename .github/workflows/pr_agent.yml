@@ -9,11 +9,12 @@ jobs:
   pr_agent_job:
     if: ${{ github.event.sender.type != 'Bot' }}
     runs-on: ubuntu-latest
+    name: Run pr agent on every pull request, respond to user comments
     permissions:
       issues: write
       pull-requests: write
       contents: write
-    name: Run pr agent on every pull request, respond to user comments
+
     steps:
       - name: Login to Azure Container Registry
         id: login-acr
@@ -22,21 +23,35 @@ jobs:
           registry: ailabcommonacr.azurecr.io
           username: ${{ secrets.ACR_USERNAME }}
           password: ${{ secrets.ACR_PASSWORD }}
-      
-      - name: PR Agent action step
-        id: pragent
-        uses: ailabcommonacr.azurecr.io/nortal-pr-agent
+
+      - name: Run PR Agent container
         env:
           OPENAI_KEY: ${{ secrets.OPENAI_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CONFIG.OTEL_BASIC_AUTH_USERNAME: ${{ vars.OTEL_BASIC_AUTH_USERNAME }}
-          CONFIG.OTEL_BASIC_AUTH_PASSWORD: ${{ secrets.OTEL_BASIC_AUTH_PASSWORD }}
-          PR_REVIEWER.EXTRA_INSTRUCTIONS: |
+          CONFIG_OTEL_BASIC_AUTH_USERNAME: ${{ vars.OTEL_BASIC_AUTH_USERNAME }}
+          CONFIG_OTEL_BASIC_AUTH_PASSWORD: ${{ secrets.OTEL_BASIC_AUTH_PASSWORD }}
+          PR_REVIEWER_EXTRA_INSTRUCTIONS: |
             # Naming conventions
             - Java/TS classes ▶ kebab-case
             - Functions      ▶ kebab-case
             # Folder rules
             - src/main vs src/test layout
             # When making a suggestion, make sure to make a joke
+        run: |
+          set -euo pipefail
 
+          IMAGE="ailabcommonacr.azurecr.io/nortal-pr-agent:latest"
 
+          echo "Pulling $IMAGE..."
+          docker pull "$IMAGE"
+
+          # Re-export env vars with dotted keys if the container expects them.
+          # Docker CLI can't take env var names with dots directly from shell vars,
+          # so we pass them via --env and quote properly.
+          docker run --rm \
+            -e OPENAI_KEY \
+            -e GITHUB_TOKEN \
+            -e CONFIG.OTEL_BASIC_AUTH_USERNAME="${CONFIG_OTEL_BASIC_AUTH_USERNAME}" \
+            -e CONFIG.OTEL_BASIC_AUTH_PASSWORD="${CONFIG_OTEL_BASIC_AUTH_PASSWORD}" \
+            -e PR_REVIEWER.EXTRA_INSTRUCTIONS="${PR_REVIEWER_EXTRA_INSTRUCTIONS}" \
+            "$IMAGE"
