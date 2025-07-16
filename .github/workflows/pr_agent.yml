@@ -8,46 +8,39 @@ jobs:
   pr_agent_job:
     if: ${{ github.event.sender.type != 'Bot' }}
     runs-on: ubuntu-latest
+    container:
+      image: ailabcommonacr.azurecr.io/nortal-pr-agent:latest
+      credentials:
+        username: ${{ secrets.ACR_USERNAME }}
+        password: ${{ secrets.ACR_PASSWORD }}
     permissions:
       issues: write
       pull-requests: write
       contents: write
     name: Run pr agent on every pull request
     env:
-      ACR_REGISTRY: ailabcommonacr.azurecr.io
+      OPENAI__KEY: ${{ secrets.OPENAI_KEY }}
+      GITHUB__USER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      CONFIG__OTEL_BASIC_AUTH_USERNAME: ${{ vars.OTEL_BASIC_AUTH_USERNAME }}
+      CONFIG__OTEL_BASIC_AUTH_PASSWORD: ${{ secrets.OTEL_BASIC_AUTH_PASSWORD }}
+      CONFIG__GIT_PROVIDER: "github"
+      PR_URL: ${{ github.event.pull_request.html_url }}
     steps:
-      - name: Login to Azure Container Registry
-        uses: azure/docker-login@v1
-        with:
-          login-server: ${{ env.ACR_REGISTRY }}
-          username: ${{ secrets.ACR_USERNAME }}
-          password: ${{ secrets.ACR_PASSWORD }}
-
-      - name: Pull PR Agent image
-        run: |
-          IMAGE=${{ env.ACR_REGISTRY }}/nortal-pr-agent:latest
-          docker pull "$IMAGE"
-      
-      - name: Run PR Agent container
-        env:
-            OPENAI__KEY: ${{ secrets.OPENAI_KEY }}
-            GITHUB__USER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            CONFIG__OTEL_BASIC_AUTH_USERNAME: ${{ vars.OTEL_BASIC_AUTH_USERNAME }}
-            CONFIG__OTEL_BASIC_AUTH_PASSWORD: ${{ secrets.OTEL_BASIC_AUTH_PASSWORD }}
-            CONFIG__GIT_PROVIDER: "github"
-            PR_URL: ${{ github.event.pull_request.html_url }}
-            IMAGE: ${{ env.ACR_REGISTRY }}/nortal-pr-agent:latest
-            PR_CODE_SUGGESTIONS__COMMITABLE_CODE_SUGGESTIONS: true
+      - name: Run PR Agent commands
         run: |
           set -euo pipefail
+          cd /app
           
-          # Define common docker run arguments
-          DOCKER_ARGS="--rm -e OPENAI__KEY -e PR_CODE_SUGGESTIONS__COMMITABLE_CODE_SUGGESTIONS -e GITHUB__USER_TOKEN -e CONFIG__OTEL_BASIC_AUTH_USERNAME -e CONFIG__OTEL_BASIC_AUTH_PASSWORD -e CONFIG__GIT_PROVIDER"
+          echo "Running PR Agent describe..."
+          python -m pr_agent.cli --pr_url="${PR_URL}" describe
           
-          # Run PR Agent commands
-          for cmd in describe review improve feedback; do
-            echo "Running pr-agent $cmd..."
-            docker run $DOCKER_ARGS "$IMAGE" --pr_url "${PR_URL}" $cmd
-          done
+          echo "Running PR Agent review..."
+          python -m pr_agent.cli --pr_url="${PR_URL}" review
+          
+          echo "Running PR Agent improve..."
+          python -m pr_agent.cli --pr_url="${PR_URL}" improve
+          
+          echo "Running PR Agent feedback..."
+          python -m pr_agent.cli --pr_url="${PR_URL}" feedback
 
 
