@@ -5,6 +5,8 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -33,6 +35,11 @@ public class User {
     @Size(max = 15, message = "Phone number must not exceed 15 characters")
     @Column(name = "phone_number", length = 15)
     private String phoneNumber;
+    
+    @ElementCollection
+    @CollectionTable(name = "user_tags", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "tag")
+    private Set<String> tags = new HashSet<>();
     
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
@@ -104,6 +111,26 @@ public class User {
         this.phoneNumber = phoneNumber;
     }
     
+    public Set<String> getTags() {
+        return tags;
+    }
+    
+    public void setTags(Set<String> tags) {
+        this.tags = tags;
+    }
+    
+    public void addTag(String tag) {
+        if (tag != null && !tag.trim().isEmpty()) {
+            this.tags.add(tag.trim().toLowerCase());
+        }
+    }
+    
+    public void removeTag(String tag) {
+        if (tag != null) {
+            this.tags.remove(tag.trim().toLowerCase());
+        }
+    }
+    
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -128,6 +155,7 @@ public class User {
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
+                ", tags=" + tags +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 '}';

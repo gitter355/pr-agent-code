@@ -73,4 +73,16 @@ public class UserService {
     public List<User> getUsersByLastName(String lastName) {
         return userRepository.findByLastNameContainingIgnoreCase(lastName);
     }
+    
+    public User addTagToUser(Long id, String tag) {
+        User user = getUserById(id);
+        user.addTag(tag);
+        return userRepository.save(user);
+    }
+    
+    public User removeTagFromUser(Long id, String tag) {
+        User user = getUserById(id);
+        user.removeTag(tag);
+        return userRepository.save(user);
+    }
 } 
