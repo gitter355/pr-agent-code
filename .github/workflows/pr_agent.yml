@@ -20,16 +20,56 @@ jobs:
           login-server: ailabcommonacr.azurecr.io
           username: ${{ secrets.ACR_USERNAME }}
           password: ${{ secrets.ACR_PASSWORD }}
+
+      - name: Pull PR Agent image
+        run: |
+          IMAGE=ailabcommonacr.azurecr.io/nortal-pr-agent:latest
+          docker pull "$IMAGE"
       
       - name: Run PR Agent container
+        env:
+            OPENAI_KEY: ${{ secrets.OPENAI_KEY }}
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            CONFIG__OTEL_BASIC_AUTH_USERNAME: ${{ vars.OTEL_BASIC_AUTH_USERNAME }}
+            CONFIG__OTEL_BASIC_AUTH_PASSWORD: ${{ secrets.OTEL_BASIC_AUTH_PASSWORD }}
+            PR_URL: ${{ github.event.pull_request.html_url }}      
         run: |
-          docker pull ailabcommonacr.azurecr.io/nortal-pr-agent:latest
+          set -euo pipefail
+          IMAGE=ailabcommonacr.azurecr.io/nortal-pr-agent:latest
+
+          # All commands run in /github/workspace by default
+          # If your CLI expects /app, mount it:
+          # WORKDIR="/github/workspace"
+          # docker run --rm -v "$GITHUB_WORKSPACE":/app -w /app ...
+
+          # 1) Describe the PR (updates title/description)
           docker run --rm \
-            -e GITHUB_TOKEN \
             -e OPENAI_KEY \
-            -e CONFIG.OTEL_BASIC_AUTH_USERNAME \
-            -e CONFIG.OTEL_BASIC_AUTH_PASSWORD \
-            -e PR_REVIEWER.EXTRA_INSTRUCTIONS \
-            ailabcommonacr.azurecr.io/nortal-pr-agent:latest
+            -e GITHUB_TOKEN \
+            -e CONFIG__OTEL_BASIC_AUTH_USERNAME \
+            -e CONFIG__OTEL_BASIC_AUTH_PASSWORD \
+            -e PR_REVIEWER.EXTRA_INSTRUCTIONS="${PR_REVIEWER_EXTRA_INSTRUCTIONS}" \
+            -e PR_URL="${PR_URL}" \
+            "$IMAGE" describe
+
+          # 2) Add a review with suggestions
+          docker run --rm \
+            -e OPENAI_KEY \
+            -e GITHUB_TOKEN \
+            -e CONFIG__OTEL_BASIC_AUTH_USERNAME \
+            -e CONFIG__OTEL_BASIC_AUTH_PASSWORD \
+            -e PR_REVIEWER.EXTRA_INSTRUCTIONS="${PR_REVIEWER_EXTRA_INSTRUCTIONS}" \
+            -e PR_URL="${PR_URL}" \
+            "$IMAGE" review
+
+          # 3) (Optional) Send commit suggestions
+          docker run --rm \
+            -e OPENAI_KEY \
+            -e GITHUB_TOKEN \
+            -e CONFIG__OTEL_BASIC_AUTH_USERNAME \
+            -e CONFIG__OTEL_BASIC_AUTH_PASSWORD \
+            -e PR_REVIEWER.EXTRA_INSTRUCTIONS="${PR_REVIEWER_EXTRA_INSTRUCTIONS}" \
+            -e PR_URL="${PR_URL}" \
+            "$IMAGE" improve
 
 
