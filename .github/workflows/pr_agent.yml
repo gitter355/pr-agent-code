@@ -28,47 +28,46 @@ jobs:
       
       - name: Run PR Agent container
         env:
-            OPENAI_KEY: ${{ secrets.OPENAI_KEY }}
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            CONFIG__OTEL_BASIC_AUTH_USERNAME: ${{ vars.OTEL_BASIC_AUTH_USERNAME }}
-            CONFIG__OTEL_BASIC_AUTH_PASSWORD: ${{ secrets.OTEL_BASIC_AUTH_PASSWORD }}
-            PR_URL: ${{ github.event.pull_request.html_url }}      
+          OPENAI_KEY: ${{ secrets.OPENAI_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CONFIG__OTEL_BASIC_AUTH_USERNAME: ${{ vars.OTEL_BASIC_AUTH_USERNAME }}
+          CONFIG__OTEL_BASIC_AUTH_PASSWORD: ${{ secrets.OTEL_BASIC_AUTH_PASSWORD }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
         run: |
           set -euo pipefail
           IMAGE=ailabcommonacr.azurecr.io/nortal-pr-agent:latest
-          PR_URL=${{ github.event.pull_request.html_url }}
 
-          # If the CLI needs access to your workspace, mount it:
-          MOUNT="-v $GITHUB_WORKSPACE:/workspace -w /workspace"
-
-          # 1) Describe the PR (updates title/description)
-          docker run --rm $MOUNT \
+          # 1) Describe the PR
+          docker run --rm \
             -e OPENAI_KEY \
             -e GITHUB_TOKEN \
             -e CONFIG__OTEL_BASIC_AUTH_USERNAME \
             -e CONFIG__OTEL_BASIC_AUTH_PASSWORD \
+            -e PR_REVIEWER.EXTRA_INSTRUCTIONS="Always crack a joke in your suggestion" \
+            -e PR_URL="${PR_URL}" \
             "$IMAGE" \
-            --pr_url "${PR_URL}" \
             describe
 
-          # 2) Add a review with suggestions
-          docker run --rm $MOUNT \
+          # 2) Review the PR
+          docker run --rm \
             -e OPENAI_KEY \
             -e GITHUB_TOKEN \
             -e CONFIG__OTEL_BASIC_AUTH_USERNAME \
             -e CONFIG__OTEL_BASIC_AUTH_PASSWORD \
+            -e PR_REVIEWER.EXTRA_INSTRUCTIONS="Always crack a joke in your suggestion" \
+            -e PR_URL="${PR_URL}" \
             "$IMAGE" \
-            --pr_url "${PR_URL}" \
             review
 
-          # 3) (Optional) Send commit suggestions
-          docker run --rm $MOUNT \
+          # 3) Improve the PR
+          docker run --rm \
             -e OPENAI_KEY \
             -e GITHUB_TOKEN \
             -e CONFIG__OTEL_BASIC_AUTH_USERNAME \
             -e CONFIG__OTEL_BASIC_AUTH_PASSWORD \
+            -e PR_REVIEWER.EXTRA_INSTRUCTIONS="Always crack a joke in your suggestion" \
+            -e PR_URL="${PR_URL}" \
             "$IMAGE" \
-            --pr_url "${PR_URL}" \
             improve
 
 
