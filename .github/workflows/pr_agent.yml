@@ -36,37 +36,42 @@ jobs:
         run: |
           set -euo pipefail
           IMAGE=ailabcommonacr.azurecr.io/nortal-pr-agent:latest
+          PR_URL=${{ github.event.pull_request.html_url }}
 
-          # All commands run in /github/workspace by default
-          # If your CLI expects /app, mount it:
-          # WORKDIR="/github/workspace"
-          # docker run --rm -v "$GITHUB_WORKSPACE":/app -w /app ...
+          # If the CLI needs access to your workspace, mount it:
+          MOUNT="-v $GITHUB_WORKSPACE:/workspace -w /workspace"
 
           # 1) Describe the PR (updates title/description)
-          docker run --rm \
+          docker run --rm $MOUNT \
             -e OPENAI_KEY \
             -e GITHUB_TOKEN \
             -e CONFIG__OTEL_BASIC_AUTH_USERNAME \
             -e CONFIG__OTEL_BASIC_AUTH_PASSWORD \
-            -e PR_URL="${PR_URL}" \
-            "$IMAGE" describe
+            -e PR_REVIEWER.EXTRA_INSTRUCTIONS="${PR_REVIEWER_EXTRA_INSTRUCTIONS}" \
+            "$IMAGE" \
+            --pr_url "${PR_URL}" \
+            describe
 
           # 2) Add a review with suggestions
-          docker run --rm \
+          docker run --rm $MOUNT \
             -e OPENAI_KEY \
             -e GITHUB_TOKEN \
             -e CONFIG__OTEL_BASIC_AUTH_USERNAME \
             -e CONFIG__OTEL_BASIC_AUTH_PASSWORD \
-            -e PR_URL="${PR_URL}" \
-            "$IMAGE" review
+            -e PR_REVIEWER.EXTRA_INSTRUCTIONS="${PR_REVIEWER_EXTRA_INSTRUCTIONS}" \
+            "$IMAGE" \
+            --pr_url "${PR_URL}" \
+            review
 
           # 3) (Optional) Send commit suggestions
-          docker run --rm \
+          docker run --rm $MOUNT \
             -e OPENAI_KEY \
             -e GITHUB_TOKEN \
             -e CONFIG__OTEL_BASIC_AUTH_USERNAME \
             -e CONFIG__OTEL_BASIC_AUTH_PASSWORD \
-            -e PR_URL="${PR_URL}" \
-            "$IMAGE" improve
+            -e PR_REVIEWER.EXTRA_INSTRUCTIONS="${PR_REVIEWER_EXTRA_INSTRUCTIONS}" \
+            "$IMAGE" \
+            --pr_url "${PR_URL}" \
+            improve
 
 
