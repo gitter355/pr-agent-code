@@ -48,7 +48,6 @@ jobs:
             -e GITHUB_TOKEN \
             -e CONFIG__OTEL_BASIC_AUTH_USERNAME \
             -e CONFIG__OTEL_BASIC_AUTH_PASSWORD \
-            -e PR_REVIEWER.EXTRA_INSTRUCTIONS="${PR_REVIEWER_EXTRA_INSTRUCTIONS}" \
             -e PR_URL="${PR_URL}" \
             "$IMAGE" describe
 
@@ -58,7 +57,6 @@ jobs:
             -e GITHUB_TOKEN \
             -e CONFIG__OTEL_BASIC_AUTH_USERNAME \
             -e CONFIG__OTEL_BASIC_AUTH_PASSWORD \
-            -e PR_REVIEWER.EXTRA_INSTRUCTIONS="${PR_REVIEWER_EXTRA_INSTRUCTIONS}" \
             -e PR_URL="${PR_URL}" \
             "$IMAGE" review
 
@@ -68,7 +66,6 @@ jobs:
             -e GITHUB_TOKEN \
             -e CONFIG__OTEL_BASIC_AUTH_USERNAME \
             -e CONFIG__OTEL_BASIC_AUTH_PASSWORD \
-            -e PR_REVIEWER.EXTRA_INSTRUCTIONS="${PR_REVIEWER_EXTRA_INSTRUCTIONS}" \
             -e PR_URL="${PR_URL}" \
             "$IMAGE" improve
 
