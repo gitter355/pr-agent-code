@@ -13,17 +13,19 @@ jobs:
       pull-requests: write
       contents: write
     name: Run pr agent on every pull request
+    env:
+      ACR_REGISTRY: ailabcommonacr.azurecr.io
     steps:
       - name: Login to Azure Container Registry
         uses: azure/docker-login@v1
         with:
-          login-server: ailabcommonacr.azurecr.io
+          login-server: ${{ env.ACR_REGISTRY }}
           username: ${{ secrets.ACR_USERNAME }}
           password: ${{ secrets.ACR_PASSWORD }}
 
       - name: Pull PR Agent image
         run: |
-          IMAGE=ailabcommonacr.azurecr.io/nortal-pr-agent:latest
+          IMAGE=${{ env.ACR_REGISTRY }}/nortal-pr-agent:latest
           docker pull "$IMAGE"
       
       - name: Run PR Agent container
@@ -34,22 +36,17 @@ jobs:
             CONFIG__OTEL_BASIC_AUTH_PASSWORD: ${{ secrets.OTEL_BASIC_AUTH_PASSWORD }}
             CONFIG__GIT_PROVIDER: "github"
             PR_URL: ${{ github.event.pull_request.html_url }}
-            IMAGE: ailabcommonacr.azurecr.io/nortal-pr-agent:latest
+            IMAGE: ${{ env.ACR_REGISTRY }}/nortal-pr-agent:latest
         run: |
           set -euo pipefail
           
-          docker run --rm -e OPENAI__KEY -e GITHUB__USER_TOKEN -e CONFIG__OTEL_BASIC_AUTH_USERNAME -e CONFIG__OTEL_BASIC_AUTH_PASSWORD -e CONFIG__GIT_PROVIDER \
-            "$IMAGE" --pr_url "${PR_URL}" describe
-
+          # Define common docker run arguments
+          DOCKER_ARGS="--rm -e OPENAI__KEY -e GITHUB__USER_TOKEN -e CONFIG__OTEL_BASIC_AUTH_USERNAME -e CONFIG__OTEL_BASIC_AUTH_PASSWORD -e CONFIG__GIT_PROVIDER"
           
-          docker run --rm -e OPENAI__KEY -e GITHUB__USER_TOKEN -e CONFIG__OTEL_BASIC_AUTH_USERNAME -e CONFIG__OTEL_BASIC_AUTH_PASSWORD -e CONFIG__GIT_PROVIDER \
-            "$IMAGE" --pr_url "${PR_URL}" review
-
-          
-          docker run --rm -e OPENAI__KEY -e GITHUB__USER_TOKEN -e CONFIG__OTEL_BASIC_AUTH_USERNAME -e CONFIG__OTEL_BASIC_AUTH_PASSWORD -e CONFIG__GIT_PROVIDER \
-            "$IMAGE" --pr_url "${PR_URL}" improve
-
-          docker run --rm -e OPENAI__KEY -e GITHUB__USER_TOKEN -e CONFIG__OTEL_BASIC_AUTH_USERNAME -e CONFIG__OTEL_BASIC_AUTH_PASSWORD -e CONFIG__GIT_PROVIDER \
-            "$IMAGE" --pr_url "${PR_URL}" feedback
+          # Run PR Agent commands
+          for cmd in describe review improve feedback; do
+            echo "Running pr-agent $cmd..."
+            docker run $DOCKER_ARGS "$IMAGE" --pr_url "${PR_URL}" $cmd
+          done
 
 
