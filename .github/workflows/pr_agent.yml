@@ -1,8 +1,6 @@
-name: PR Agent Workflow
-
 on:
   pull_request:
-    types: [opened, reopened, ready_for_review]
+    types: [opened, reopened, ready_for_review, synchronize]
   issue_comment:
   workflow_dispatch:
 
@@ -17,10 +15,9 @@ jobs:
     name: Run pr agent on every pull request, respond to user comments
     steps:
       - name: Login to Azure Container Registry
-        id: login-acr
-        uses: docker/login-action@v3
+        uses: azure/docker-login@v1
         with:
-          registry: ailabcommonacr.azurecr.io
+          login-server: ailabcommonacr.azurecr.io
           username: ${{ secrets.ACR_USERNAME }}
           password: ${{ secrets.ACR_PASSWORD }}
       
