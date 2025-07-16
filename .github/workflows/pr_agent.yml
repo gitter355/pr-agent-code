@@ -27,6 +27,7 @@ jobs:
       PR_URL: ${{ github.event.pull_request.html_url }}
     steps:
       - name: Run PR Agent commands
+        shell: bash
         run: |
           set -euo pipefail
           cd /app
