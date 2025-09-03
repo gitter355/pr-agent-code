@@ -14,6 +14,7 @@
 /Users/sarunasj/src/ai-lab/pr-agent-code/src/main/java/com/example/usermanagement/repository/PermissionRepository.java
 /Users/sarunasj/src/ai-lab/pr-agent-code/src/main/java/com/example/usermanagement/repository/UserPermissionRepository.java
 /Users/sarunasj/src/ai-lab/pr-agent-code/src/main/java/com/example/usermanagement/repository/UserRepository.java
+/Users/sarunasj/src/ai-lab/pr-agent-code/src/main/java/com/example/usermanagement/service/DatabaseHealthService.java
 /Users/sarunasj/src/ai-lab/pr-agent-code/src/main/java/com/example/usermanagement/service/PermissionService.java
 /Users/sarunasj/src/ai-lab/pr-agent-code/src/main/java/com/example/usermanagement/service/UserPermissionService.java
 /Users/sarunasj/src/ai-lab/pr-agent-code/src/main/java/com/example/usermanagement/service/UserService.java
