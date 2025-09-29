@@ -21,8 +21,6 @@ jobs:
     env:
       OPENAI__KEY: ${{ secrets.OPENAI_KEY }}
       GITHUB__USER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      CONFIG__OTEL_BASIC_AUTH_USERNAME: ${{ vars.OTEL_BASIC_AUTH_USERNAME }}
-      CONFIG__OTEL_BASIC_AUTH_PASSWORD: ${{ secrets.OTEL_BASIC_AUTH_PASSWORD }}
       CONFIG__GIT_PROVIDER: "github"
       PR_URL: ${{ github.event.pull_request.html_url }}
     steps:
